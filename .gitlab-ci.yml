@@ -1,0 +1,22 @@
+variables:
+  IMAGE_NAME_BASE_18: cokoapps/base-18
+
+stages:
+  - Build
+
+build base 18:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:23-dind
+  services:
+    - docker:23-dind
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $IMAGE_NAME_BASE_18:latest
+      --tag $IMAGE_NAME_BASE_18:$(date +'%Y-%m-%d')
+      -f Dockerfile-base-18 .
+    - docker push $IMAGE_NAME_BASE_18:latest
+    - docker push $IMAGE_NAME_BASE_18:$(date +'%Y-%m-%d')
