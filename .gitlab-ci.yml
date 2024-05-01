@@ -15,8 +15,10 @@ build base 18:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
     - docker build
+      --tag $IMAGE_NAME_BASE:18
       --tag $IMAGE_NAME_BASE:18-latest
       --tag $IMAGE_NAME_BASE:18-$(date +'%Y-%m-%d')
       -f Dockerfile-base-18 .
+    - docker push $IMAGE_NAME_BASE:18
     - docker push $IMAGE_NAME_BASE:18-latest
     - docker push $IMAGE_NAME_BASE:18-$(date +'%Y-%m-%d')
