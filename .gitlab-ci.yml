@@ -1,5 +1,5 @@
 variables:
-  IMAGE_NAME_BASE_18: cokoapps/base-18
+  IMAGE_NAME_BASE: cokoapps/base
 
 stages:
   - Build
@@ -15,8 +15,8 @@ build base 18:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
     - docker build
-      --tag $IMAGE_NAME_BASE_18:latest
-      --tag $IMAGE_NAME_BASE_18:$(date +'%Y-%m-%d')
+      --tag $IMAGE_NAME_BASE:18-latest
+      --tag $IMAGE_NAME_BASE:18-$(date +'%Y-%m-%d')
       -f Dockerfile-base-18 .
-    - docker push $IMAGE_NAME_BASE_18:latest
-    - docker push $IMAGE_NAME_BASE_18:$(date +'%Y-%m-%d')
+    - docker push $IMAGE_NAME_BASE:18-latest
+    - docker push $IMAGE_NAME_BASE:18-$(date +'%Y-%m-%d')
