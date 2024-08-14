@@ -46,7 +46,8 @@ build cypress 18:
 
 test cypress image:
   stage: Test
-  needs: build cypress 18
+  needs:
+    - build cypress 18
   image: cokoapps/cypress:18
   services:
     - docker:27-dind
