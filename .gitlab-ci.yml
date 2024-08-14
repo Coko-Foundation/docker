@@ -38,7 +38,7 @@ build cypress 18:
       --tag $IMAGE_NAME_CYPRESS:18
       --tag $IMAGE_NAME_CYPRESS:18-latest
       --tag $IMAGE_NAME_CYPRESS:18-$(date +'%Y-%m-%d')
-      -f Dockerfile-base-18 .
+      -f Dockerfile-cypress-18 .
     - docker push $IMAGE_NAME_CYPRESS:18
     - docker push $IMAGE_NAME_CYPRESS:18-latest
     - docker push $IMAGE_NAME_CYPRESS:18-$(date +'%Y-%m-%d')
