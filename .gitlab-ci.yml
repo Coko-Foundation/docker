@@ -1,14 +1,15 @@
 variables:
   IMAGE_NAME_BASE: cokoapps/base
+  IMAGE_NAME_CYPRESS: cokoapps/cypress
 
 stages:
   - Build
 
 build base 18:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:23-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
   services:
-    - docker:23-dind
+    - docker:27-dind
   only:
     - main
   before_script:
@@ -22,3 +23,22 @@ build base 18:
     - docker push $IMAGE_NAME_BASE:18
     - docker push $IMAGE_NAME_BASE:18-latest
     - docker push $IMAGE_NAME_BASE:18-$(date +'%Y-%m-%d')
+
+build cypress 18:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $IMAGE_NAME_CYPRESS:18
+      --tag $IMAGE_NAME_CYPRESS:18-latest
+      --tag $IMAGE_NAME_CYPRESS:18-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-18 .
+    - docker push $IMAGE_NAME_CYPRESS:18
+    - docker push $IMAGE_NAME_CYPRESS:18-latest
+    - docker push $IMAGE_NAME_CYPRESS:18-$(date +'%Y-%m-%d')
