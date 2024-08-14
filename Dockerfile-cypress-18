@@ -15,4 +15,7 @@ RUN apt-get update && \
 
 WORKDIR e2e
 
+ENV DOCKER_HOST="tcp://docker:2375"
+ENV DOCKER_TLS_CERTDIR=""
+
 ENTRYPOINT [""]
