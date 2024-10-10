@@ -1,6 +1,6 @@
 variables:
-  IMAGE_NAME_BASE: cokoapps/base
-  IMAGE_NAME_CYPRESS: cokoapps/cypress
+  BASE: cokoapps/base
+  CYPRESS: cokoapps/cypress
 
 stages:
   - Build
@@ -17,13 +17,13 @@ build base 18:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
     - docker build
-      --tag $IMAGE_NAME_BASE:18
-      --tag $IMAGE_NAME_BASE:18-latest
-      --tag $IMAGE_NAME_BASE:18-$(date +'%Y-%m-%d')
+      --tag $BASE:18
+      --tag $BASE:18-latest
+      --tag $BASE:18-$(date +'%Y-%m-%d')
       -f Dockerfile-base-18 .
-    - docker push $IMAGE_NAME_BASE:18
-    - docker push $IMAGE_NAME_BASE:18-latest
-    - docker push $IMAGE_NAME_BASE:18-$(date +'%Y-%m-%d')
+    - docker push $BASE:18
+    - docker push $BASE:18-latest
+    - docker push $BASE:18-$(date +'%Y-%m-%d')
 
 build cypress 18:
   stage: Build
@@ -36,23 +36,26 @@ build cypress 18:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
     - docker build
-      --tag $IMAGE_NAME_CYPRESS:18
-      --tag $IMAGE_NAME_CYPRESS:18-latest
-      --tag $IMAGE_NAME_CYPRESS:18-$(date +'%Y-%m-%d')
+      --tag $CYPRESS:18
+      --tag $CYPRESS:18-latest
+      --tag $CYPRESS:18-$(date +'%Y-%m-%d')
       -f Dockerfile-cypress-18 .
-    - docker push $IMAGE_NAME_CYPRESS:18
-    - docker push $IMAGE_NAME_CYPRESS:18-latest
-    - docker push $IMAGE_NAME_CYPRESS:18-$(date +'%Y-%m-%d')
+    - docker push $CYPRESS:18
+    - docker push $CYPRESS:18-latest
+    - docker push $CYPRESS:18-$(date +'%Y-%m-%d')
 
 test cypress image:
   stage: Test
   needs:
     - build cypress 18
-  image: cokoapps/cypress:18
+  image: $CYPRESS:18-latest
   services:
     - docker:27-dind
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
   script:
+    - node -v
+    - cypress -v
     - docker info
+    - docker compose --help
