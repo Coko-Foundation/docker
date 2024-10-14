@@ -27,6 +27,25 @@ build base 18:
     - docker push $BASE:18-latest
     - docker push $BASE:18-$(date +'%Y-%m-%d')
 
+build base 20:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $BASE:20
+      --tag $BASE:20-latest
+      --tag $BASE:20-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-20 .
+    - docker push $BASE:20
+    - docker push $BASE:20-latest
+    - docker push $BASE:20-$(date +'%Y-%m-%d')
+
 build base dev 18:
   stage: Build
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
@@ -47,6 +66,27 @@ build base dev 18:
     - docker push $DEV:18
     - docker push $DEV:18-latest
     - docker push $DEV:18-$(date +'%Y-%m-%d')
+
+build base dev 20:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  needs:
+    - build base 20
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $DEV:20
+      --tag $DEV:20-latest
+      --tag $DEV:20-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-20-dev .
+    - docker push $DEV:20
+    - docker push $DEV:20-latest
+    - docker push $DEV:20-$(date +'%Y-%m-%d')
 
 build base docker 18:
   stage: Build
@@ -69,6 +109,27 @@ build base docker 18:
     - docker push $DOCKER:18-latest
     - docker push $DOCKER:18-$(date +'%Y-%m-%d')
 
+build base docker 20:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  needs:
+    - build base 20
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $DOCKER:20
+      --tag $DOCKER:20-latest
+      --tag $DOCKER:20-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-20-with-docker .
+    - docker push $DOCKER:20
+    - docker push $DOCKER:20-latest
+    - docker push $DOCKER:20-$(date +'%Y-%m-%d')
+
 build cypress 18:
   stage: Build
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
@@ -87,6 +148,25 @@ build cypress 18:
     - docker push $CYPRESS:18
     - docker push $CYPRESS:18-latest
     - docker push $CYPRESS:18-$(date +'%Y-%m-%d')
+
+build cypress 20:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $CYPRESS:20
+      --tag $CYPRESS:20-latest
+      --tag $CYPRESS:20-$(date +'%Y-%m-%d')
+      -f Dockerfile-cypress-20 .
+    - docker push $CYPRESS:20
+    - docker push $CYPRESS:20-latest
+    - docker push $CYPRESS:20-$(date +'%Y-%m-%d')
 
 test cypress image:
   stage: Test
