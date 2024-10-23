@@ -5,6 +5,7 @@ variables:
   CYPRESS: cokoapps/cypress
   RELEASE: cokoapps/release
   RELEASE_DOCKER: cokoapps/release-docker
+  FLY: cokoapps/fly
 
 stages:
   - Build
@@ -212,11 +213,26 @@ build release docker 20:
     - docker push $RELEASE_DOCKER:20-latest
     - docker push $RELEASE_DOCKER:20-$(date +'%Y-%m-%d')
 
+build fly:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build --tag $FLY -f Dockerfile-fly .
+    - docker push $FLY
+
 test cypress image:
   stage: Test
   needs:
     - build cypress 18
   image: $CYPRESS:18-latest
+  only:
+    - main
   services:
     - docker:27-dind
   variables:
