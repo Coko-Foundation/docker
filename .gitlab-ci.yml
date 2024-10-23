@@ -223,7 +223,7 @@ build fly:
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
-    - docker build --tag $FLY -f Dockerfile-fly .
+    - docker build --tag $FLY:latest --tag $FLY:$(date +'%Y-%m-%d') -f Dockerfile-fly .
     - docker push $FLY
 
 test cypress image:
