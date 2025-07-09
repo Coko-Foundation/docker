@@ -1,0 +1,4 @@
+FROM cokoapps/base:22
+
+RUN apt-get update
+RUN apt-get install -y vim nano ranger curl

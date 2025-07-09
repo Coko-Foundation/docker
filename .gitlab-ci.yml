@@ -49,6 +49,25 @@ build base 20:
     - docker push $BASE:20-latest
     - docker push $BASE:20-$(date +'%Y-%m-%d')
 
+build base 22:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $BASE:22
+      --tag $BASE:22-latest
+      --tag $BASE:22-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-22 .
+    - docker push $BASE:22
+    - docker push $BASE:22-latest
+    - docker push $BASE:22-$(date +'%Y-%m-%d')
+
 build base dev 18:
   stage: Build
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
@@ -90,6 +109,27 @@ build base dev 20:
     - docker push $DEV:20
     - docker push $DEV:20-latest
     - docker push $DEV:20-$(date +'%Y-%m-%d')
+
+build base dev 22:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  services:
+    - docker:27-dind
+  needs:
+    - build base 22
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $DEV:22
+      --tag $DEV:22-latest
+      --tag $DEV:22-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-22-dev .
+    - docker push $DEV:22
+    - docker push $DEV:22-latest
+    - docker push $DEV:22-$(date +'%Y-%m-%d')
 
 build base docker 18:
   stage: Build
