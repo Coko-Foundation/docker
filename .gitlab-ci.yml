@@ -13,9 +13,9 @@ stages:
 
 build base 18:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   only:
     - main
   before_script:
@@ -32,9 +32,9 @@ build base 18:
 
 build base 20:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   only:
     - main
   before_script:
@@ -51,9 +51,9 @@ build base 20:
 
 build base 22:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   only:
     - main
   before_script:
@@ -68,11 +68,30 @@ build base 22:
     - docker push $BASE:22-latest
     - docker push $BASE:22-$(date +'%Y-%m-%d')
 
+build base 24:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
+  services:
+    - docker:29-dind
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $BASE:24
+      --tag $BASE:24-latest
+      --tag $BASE:24-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-24 .
+    - docker push $BASE:24
+    - docker push $BASE:24-latest
+    - docker push $BASE:24-$(date +'%Y-%m-%d')
+
 build base dev 18:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   needs:
     - build base 18
   only:
@@ -91,9 +110,9 @@ build base dev 18:
 
 build base dev 20:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   needs:
     - build base 20
   only:
@@ -112,9 +131,9 @@ build base dev 20:
 
 build base dev 22:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   needs:
     - build base 22
   only:
@@ -131,11 +150,32 @@ build base dev 22:
     - docker push $DEV:22-latest
     - docker push $DEV:22-$(date +'%Y-%m-%d')
 
+build base dev 24:
+  stage: Build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
+  services:
+    - docker:29-dind
+  needs:
+    - build base 24
+  only:
+    - main
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - docker build
+      --tag $DEV:24
+      --tag $DEV:24-latest
+      --tag $DEV:24-$(date +'%Y-%m-%d')
+      -f Dockerfile-base-24-dev .
+    - docker push $DEV:24
+    - docker push $DEV:24-latest
+    - docker push $DEV:24-$(date +'%Y-%m-%d')
+
 build base docker 18:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   needs:
     - build base 18
   only:
@@ -154,9 +194,9 @@ build base docker 18:
 
 build base docker 20:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   needs:
     - build base 20
   only:
@@ -175,9 +215,9 @@ build base docker 20:
 
 build cypress 18:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   only:
     - main
   before_script:
@@ -194,9 +234,9 @@ build cypress 18:
 
 build cypress 20:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   only:
     - main
   before_script:
@@ -213,9 +253,9 @@ build cypress 20:
 
 build release 20:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   needs:
     - build base 20
   only:
@@ -234,9 +274,9 @@ build release 20:
 
 build release docker 20:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   needs:
     - build base docker 20
   only:
@@ -255,9 +295,9 @@ build release docker 20:
 
 build fly:
   stage: Build
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:27-dind
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:29-dind
   services:
-    - docker:27-dind
+    - docker:29-dind
   only:
     - main
   before_script:
@@ -278,7 +318,7 @@ test cypress image:
   only:
     - main
   services:
-    - docker:27-dind
+    - docker:29-dind
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
