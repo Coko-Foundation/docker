@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 9 * * 1" # every Monday morning
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BASE: cokoapps/base
+  DEV: cokoapps/base-dev
+
+jobs:
+  build-base:
+    name: Build base (${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute date tag
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile-base-${{ matrix.node }}
+          push: true
+          tags: |
+            ${{ env.BASE }}:${{ matrix.node }}
+            ${{ env.BASE }}:${{ matrix.node }}-latest
+            ${{ env.BASE }}:${{ matrix.node }}-${{ steps.date.outputs.date }}
+
+  build-base-dev:
+    name: Build base-dev (${{ matrix.node }})
+    runs-on: ubuntu-latest
+    needs: [build-base]
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute date tag
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile-base-${{ matrix.node }}-dev
+          push: true
+          tags: |
+            ${{ env.DEV }}:${{ matrix.node }}
+            ${{ env.DEV }}:${{ matrix.node }}-latest
+            ${{ env.DEV }}:${{ matrix.node }}-${{ steps.date.outputs.date }}
