@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 9 * * 1" # every Monday morning
+    - cron: '0 9 * * 1' # every Monday morning
   workflow_dispatch:
 
 permissions:
@@ -29,6 +29,9 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -44,6 +47,7 @@ jobs:
           context: .
           file: Dockerfile-base-${{ matrix.node }}
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.BASE }}:${{ matrix.node }}
             ${{ env.BASE }}:${{ matrix.node }}-latest
@@ -64,6 +68,9 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -79,6 +86,7 @@ jobs:
           context: .
           file: Dockerfile-base-${{ matrix.node }}-dev
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.DEV }}:${{ matrix.node }}
             ${{ env.DEV }}:${{ matrix.node }}-latest
